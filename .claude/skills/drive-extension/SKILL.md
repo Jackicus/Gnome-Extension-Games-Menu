@@ -50,6 +50,7 @@ walkthrough is **one** tool call, and it stops at the first failing step:
 | `key KEYSYM` | `Escape`, `Return`, arrows, `F1`–`F12`, a remote's `XF86OK`/`XF86Back`/`XF86ChannelUp`…, one character, or a chord like `Super+Page_Down` |
 | `wait SECS` | Let an animation land: ~1 s after anything that opens or closes the overview, ~0.6 s after a pop-up opens or closes |
 | `shot [FILE [X Y W H]]` | Screenshot, or **just a region** — crop to what you are checking (a header strip, one tile) rather than reading 1600×900 every time |
+| `window FILE` | Screenshot of the focused window alone, frame and shadow included — the preferences, say |
 | `overview on\|off` | Show/hide the overview. While on, shots and clicks act on it; nothing dismisses it until `off`. |
 
 The same steps exist as single commands (`./scripts/nested.sh click X Y`, …) for a
@@ -75,6 +76,21 @@ Do not rely on them — they are for accidents. If the idle stop hit mid-task,
 the old dconf snapshot and whatever the previous build left on screen; only a
 fresh start exercises `extension.js`, the enable path and first-frame layout the
 way a login does. Edits to `extension.js` or `metadata.json` *need* one.
+
+## Screenshots for the README: `start --clean --demo`
+
+`start --clean` gives the nested shell a dconf database of its own — Games Menu
+alone in `enabled-extensions`, the real session's accent, fonts and colour
+scheme copied in, nothing written to `~/.config/dconf/user` — so no other
+extension's button, panel or log line is in the picture, and a setting changed
+in it (`run gsettings --schemadir src/schemas set …`) never reaches the real
+session. `--demo` adds the made-up library of `scripts/demo_library.py`
+(invented games, artwork drawn on the spot, Play running `true`) through the
+nested session's `XDG_CACHE_HOME`. Every picture in `docs/screenshots/` is of
+that, never of the user's own library or anyone's real artwork. Crop the top
+30 px (the top bar, with the screencast's indicator in it) off overview shots,
+and take the preferences with `window FILE`. `stop` deletes the private
+database; a shell already running is reused as it is, so `stop` first.
 
 ## Other nested shells
 
