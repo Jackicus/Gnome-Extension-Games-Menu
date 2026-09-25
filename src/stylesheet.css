@@ -1,0 +1,279 @@
+/* Games Menu — St stylesheet.
+ *
+ * Paint only: layout lives in lib/. St CSS is a strict subset of web CSS
+ * (no flexbox, grid, calc() or variables) but it does know the system accent
+ * colour: -st-accent-color / -st-accent-fg-color, plus st-lighten(),
+ * st-darken(), st-mix() and st-transparentize(), exactly as the shell's own
+ * theme uses them. Every coloured surface below derives from those, so the
+ * extension follows Settings → Appearance → Accent Color automatically.
+ *
+ * The panels themselves are the shell's `app-folder-dialog`; what is drawn
+ * inside them uses the shell's dark neutrals (#222226 panels, #fafafb text).
+ *
+ * Type is in em throughout: 1em is the stage's 11pt UI font, so every size
+ * below follows Settings -> Accessibility -> Large Text, and the values land
+ * on the shell's own steps (%title_1 and friends in _common.scss).
+ *
+ * Every class is `gm-`: Media Libraries runs in the same shell with a
+ * stylesheet of its own, and St's are global, so a class either of them
+ * shared would be styled by both.
+ *
+ * Corner radii here are fallbacks only. They follow the "corner-radius"
+ * setting, which St CSS cannot express, so lib/shape.js sets the real value
+ * inline on every rounded surface as it is built. The numbers below match its
+ * default; change shape.js, not these.
+ */
+
+/* ---- Header ------------------------------------------------------------ */
+
+/* Above the grid in the modal library's panel. */
+.gm-header {
+    height: 52px;
+    margin-bottom: 24px;
+    spacing: 16px;
+}
+
+.gm-header-titles {
+    spacing: 2px;
+}
+
+.gm-header-title {
+    font-size: 1.77em;
+    font-weight: 800;
+    color: #fafafb;
+    text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.gm-header-subtitle {
+    font-size: 0.886em;
+    color: rgba(250, 250, 251, 0.7);
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- Library grid ------------------------------------------------------ */
+
+/* No box-shadow on artwork, here or on the hero: St shadows an image-backed
+ * widget as a square box, ignoring its radius, which reads as a dark container
+ * behind the poster (and merges into one band along a row of them). */
+.gm-art {
+    border-radius: 18px;
+    background-color: rgba(34, 34, 38, 0.8);
+}
+
+/* Placeholder artwork: an accent tint behind the section icon. Flat rather
+ * than a gradient: St paints a gradient into a texture of its own per widget,
+ * and a page of placeholders is a page of them. */
+.gm-art-placeholder {
+    background-color: st-mix(-st-accent-color, #222226, 28%);
+}
+
+.gm-art-placeholder-content {
+    spacing: 12px;
+    padding: 12px;
+}
+
+.gm-art-placeholder-icon {
+    color: st-transparentize(-st-accent-fg-color, 0.15);
+}
+
+.gm-art-placeholder-title {
+    font-size: 0.886em;
+    font-weight: bold;
+    color: st-transparentize(-st-accent-fg-color, 0.15);
+    text-align: center;
+}
+
+/* ---- Detail pane ------------------------------------------------------- */
+
+/* The shell's own folder panel is the surface (detailDialog.js), so the pane
+ * draws no chrome of its own: it is only the curve the backdrop is cut to,
+ * shape.js paneInner. */
+.gm-pane {
+    border-radius: 24px;
+}
+
+/* Its padding is what detailView.js's PADDING says, since the panel is sized
+ * around it — and it is short of 32 by shape.js PANE_INSET, which the panel
+ * keeps outside it. */
+.gm-pane-content {
+    padding: 26px;
+    spacing: 32px;
+}
+
+/* The game's hero art behind the pane content, dimmed so the type stays
+ * legible. */
+.gm-backdrop {
+    border-radius: 24px;
+}
+
+.gm-backdrop-veil {
+    border-radius: 24px;
+    background-gradient-direction: horizontal;
+    background-gradient-start: rgba(20, 20, 24, 0.92);
+    background-gradient-end: rgba(20, 20, 24, 0.7);
+}
+
+.gm-detail-side {
+    spacing: 12px;
+}
+
+.gm-hero {
+    border-radius: 22px;
+    margin-bottom: 8px;
+}
+
+.gm-detail-main {
+    spacing: 14px;
+}
+
+.gm-detail-title {
+    font-size: 1.77em;
+    font-weight: 800;
+    color: #fafafb;
+}
+
+.gm-facts {
+    spacing: 8px;
+}
+
+.gm-fact {
+    font-size: 0.82em;
+    font-weight: bold;
+    color: rgba(250, 250, 251, 0.85);
+    background-color: rgba(250, 250, 251, 0.1);
+    border-radius: 9999px;
+    padding: 4px 12px;
+}
+
+.gm-fact-strong {
+    color: -st-accent-fg-color;
+    background-color: -st-accent-color;
+}
+
+.gm-fact-rating {
+    color: st-lighten(-st-accent-color, 30%);
+    background-color: st-transparentize(-st-accent-color, 0.8);
+}
+
+.gm-fact-tag {
+    color: rgba(250, 250, 251, 0.65);
+    background-color: rgba(250, 250, 251, 0.06);
+    font-weight: normal;
+}
+
+.gm-summary {
+    font-size: 0.95em;
+    color: rgba(250, 250, 251, 0.78);
+    line-height: 1.5;
+}
+
+/* Primary and secondary pill buttons. Both are the shell's own `.button` —
+ * the primary is `.button.default`, which is where the accent fill, the
+ * sizing, the focus ring and the hover and pressed states come from. Only the
+ * pill shape the design asks for is added here. */
+.gm-action,
+.gm-action-secondary {
+    border-radius: 9999px;
+}
+
+.gm-action-content {
+    spacing: 10px;
+}
+
+/* The theme rings a focused `.button.default` in its own accent, which on the
+ * accent fill is next to invisible — and from across a room, with a remote or
+ * a controller, the ring is the only way to tell where you are. The accent's
+ * foreground colour is the one that shows against it. */
+.gm-action.default:focus {
+    box-shadow: inset 0 0 0 2px -st-accent-fg-color !important;
+}
+
+.gm-group-heading {
+    margin-top: 4px;
+    font-size: 0.886em;
+    font-weight: bold;
+    color: rgba(250, 250, 251, 0.55);
+}
+
+/* Detail rows. The highlight is the theme's flat button, one background change
+ * on the row and nothing below it: a descendant rule would restyle, and under
+ * a transition cross-fade through an offscreen buffer, once per child too. */
+.gm-list-scroll {
+    margin-top: 2px;
+}
+
+.gm-list {
+    spacing: 2px;
+    padding-right: 8px;
+}
+
+.gm-row {
+    border-radius: 18px;
+    padding: 8px 14px 8px 8px;
+    /* One height for every row, and its minimum as much as its natural: a
+     * scrolling St.BoxLayout lays its children out over its *minimum*
+     * height, so rows left to size themselves came out squashed to their
+     * minimum in a long list and full-size in a short one. `height` alone
+     * sets only the natural; the index disc's height, which a two-line
+     * row's text fits inside. */
+    min-height: 36px;
+    height: 36px;
+    transition-duration: 120ms;
+    /* A button's bold would reach every label in the row, as it does not for
+     * the popover items the theme resets the same way (%menuitem). */
+    font-weight: normal;
+}
+
+.gm-row-index {
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    font-size: 0.82em;
+    font-weight: bold;
+    color: rgba(250, 250, 251, 0.7);
+    background-color: rgba(250, 250, 251, 0.08);
+    text-align: center;
+}
+
+.gm-row-text {
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+.gm-row-title {
+    font-size: 0.95em;
+    color: #fafafb;
+}
+
+.gm-row-subtitle {
+    font-size: 0.75em;
+    color: rgba(250, 250, 251, 0.55);
+}
+
+.gm-badge {
+    font-size: 0.68em;
+    font-weight: bold;
+    color: st-lighten(-st-accent-color, 30%);
+    background-color: st-transparentize(-st-accent-color, 0.8);
+    border-radius: 9px;
+    padding: 2px 7px;
+    margin-right: 12px;
+}
+
+.gm-row-size {
+    font-size: 0.82em;
+    color: rgba(250, 250, 251, 0.5);
+    margin-right: 16px;
+}
+
+.gm-row-icon {
+    color: rgba(250, 250, 251, 0.3);
+}
+
+/* A details list with nothing in it. */
+.gm-empty-hint {
+    font-size: 0.886em;
+    color: rgba(250, 250, 251, 0.65);
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.7);
+    margin-bottom: 12px;
+}

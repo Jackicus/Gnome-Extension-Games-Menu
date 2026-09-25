@@ -1,0 +1,8 @@
+{
+  "uuid": "games-menu@jackt",
+  "name": "Games Menu",
+  "description": "Your Steam and PlayStation 2 games as a library beside Show Apps: in the overview, or in a panel that pops out of its button.",
+  "settings-schema": "org.gnome.shell.extensions.games-menu",
+  "shell-version": [ "48", "49", "50" ],
+  "version": 1
+}

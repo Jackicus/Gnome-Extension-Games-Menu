@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+    <schema path="/org/gnome/shell/extensions/games-menu/" id="org.gnome.shell.extensions.games-menu">
+
+        <!-- Games are not a folder of media: both paths only override the
+             auto-detection of Steam's library root and PCSX2's config folder. -->
+        <key name="steam-path" type="s">
+            <default>""</default>
+            <summary>Steam library root</summary>
+            <description>The folder holding steamapps/. Empty auto-detects ~/.steam/steam, ~/.local/share/Steam and the flatpak install; extra libraries come from libraryfolders.vdf either way.</description>
+        </key>
+        <key name="pcsx2-path" type="s">
+            <default>""</default>
+            <summary>PCSX2 configuration folder</summary>
+            <description>The folder holding PCSX2.ini. Empty auto-detects ~/.config/PCSX2 and the flatpak install. Game folders and covers are read from the ini itself.</description>
+        </key>
+
+        <key name="games-sources" type="as">
+            <default>['steam','igdb@1']</default>
+            <summary>Game sources, in order</summary>
+            <description>A game’s source follows its platform rather than this order: Steam apps use Steam, PS2 discs use IGDB. The order decides which IGDB credential slot is tried first. An entry is a provider, optionally with a credential slot ("igdb@2"); a slot with no credential is skipped.</description>
+        </key>
+        <key name="games-online" type="b">
+            <default>true</default>
+            <summary>Fetch artwork and descriptions online</summary>
+            <description>Off leaves the library with whatever is already cached.</description>
+        </key>
+
+        <!-- Credentials, by slot. A slot id is "<service>@<n>", and a second
+             slot ("igdb@2") is a second key to fall back to. IGDB takes two
+             fields, its Twitch client id and secret, joined with a tab in the
+             order its fields are declared in prefs.js. Stored in plain text in
+             dconf, like every other GSettings value. -->
+        <key name="credentials" type="a{ss}">
+            <default>{}</default>
+            <summary>API credentials by slot</summary>
+            <description>Slot id ("igdb@1", "igdb@2") to credential. Multi-field credentials are tab-separated. An empty or missing credential makes the sources that name it skip themselves.</description>
+        </key>
+
+        <!-- Where each thing opens. Two independent choices out of one
+             vocabulary: the same two words mean the same two places on both.
+             Neither reads the other. -->
+        <key name="library-opens-in" type="s">
+            <choices>
+                <choice value="menu"/>
+                <choice value="modal"/>
+            </choices>
+            <default>"menu"</default>
+            <summary>Where the library opens</summary>
+            <description>Where the games grid is drawn. "menu" puts it in the overview, beside the applications, opened from the button next to Show Apps. "modal" pops it up in the folder's panel over the desktop, from the same button, closed with Escape, a click away, or the button again. Where a picked game opens is detail-opens-in, which is read independently of this.</description>
+        </key>
+        <key name="detail-opens-in" type="s">
+            <choices>
+                <choice value="menu"/>
+                <choice value="modal"/>
+            </choices>
+            <default>"menu"</default>
+            <summary>Where a picked game opens</summary>
+            <description>Where the detail pane of a picked game is drawn. "menu" pops it up the way the shell opens an app folder, zooming out of the tile, over whatever the pick was made on, and it goes when that tile does. "modal" is the same panel hosted over the desktop always, outliving the overview and a change of workspace until Escape or a click away closes it.</description>
+        </key>
+
+        <!-- The shortcut, grabbed by the shell the way its own are
+             (Main.wm.addKeybinding), so the same accelerator strings GNOME's
+             keybinding settings hold. Empty by default: nothing of the
+             system's is taken until one is set. -->
+        <key name="games-shortcut" type="as">
+            <default>[]</default>
+            <summary>Open the games library</summary>
+            <description>Opens the library wherever library-opens-in puts it, and closes it again when it is what is up. Empty is no shortcut.</description>
+        </key>
+
+        <!-- Remotes, controllers and keys of the user's own (lib/actions.js,
+             lib/controls.js). keys-<action> are (keyval, modifiers) pairs,
+             numbers because the shell cannot read a key's name, and apply only
+             while the library has the keyboard; the arrows, Enter and Escape
+             always work besides. The defaults are a media remote's: OK and
+             Select (0x10081160, 0x1008ffa0), Back and Exit (0x1008ff26,
+             0x100810ae), Page Up/Down and Channel Down/Up. Home has no key:
+             the remote's Home page key is Media Libraries', which runs in the
+             same shell. pad-<action> are controller inputs as libmanette
+             reports them, "button:<code>" or "axis:<code>" and a direction;
+             the defaults are a mapped pad's D-pad, left stick, A, B, the
+             bumpers and Guide (316) for Home — Media Libraries' Home is Menu
+             (315), and Home is the one input acted on with neither library
+             up, so the two must differ. -->
+        <key name="keys-up" type="a(uu)">
+            <default>@a(uu) []</default>
+            <summary>Keys for up</summary>
+        </key>
+        <key name="keys-down" type="a(uu)">
+            <default>@a(uu) []</default>
+            <summary>Keys for down</summary>
+        </key>
+        <key name="keys-left" type="a(uu)">
+            <default>@a(uu) []</default>
+            <summary>Keys for left</summary>
+        </key>
+        <key name="keys-right" type="a(uu)">
+            <default>@a(uu) []</default>
+            <summary>Keys for right</summary>
+        </key>
+        <key name="keys-select" type="a(uu)">
+            <default>[(268964192, 0), (269025184, 0)]</default>
+            <summary>Keys for select</summary>
+        </key>
+        <key name="keys-back" type="a(uu)">
+            <default>[(269025062, 0), (268964014, 0)]</default>
+            <summary>Keys for back</summary>
+        </key>
+        <key name="keys-home" type="a(uu)">
+            <default>@a(uu) []</default>
+            <summary>Keys for home</summary>
+        </key>
+        <key name="keys-page-previous" type="a(uu)">
+            <default>[(65365, 0), (268964243, 0)]</default>
+            <summary>Keys for previous page</summary>
+        </key>
+        <key name="keys-page-next" type="a(uu)">
+            <default>[(65366, 0), (268964242, 0)]</default>
+            <summary>Keys for next page</summary>
+        </key>
+        <key name="pad-up" type="as">
+            <default>['button:544','axis:1-','axis:17-']</default>
+            <summary>Controller inputs for up</summary>
+        </key>
+        <key name="pad-down" type="as">
+            <default>['button:545','axis:1+','axis:17+']</default>
+            <summary>Controller inputs for down</summary>
+        </key>
+        <key name="pad-left" type="as">
+            <default>['button:546','axis:0-','axis:16-']</default>
+            <summary>Controller inputs for left</summary>
+        </key>
+        <key name="pad-right" type="as">
+            <default>['button:547','axis:0+','axis:16+']</default>
+            <summary>Controller inputs for right</summary>
+        </key>
+        <key name="pad-select" type="as">
+            <default>['button:304']</default>
+            <summary>Controller inputs for select</summary>
+        </key>
+        <key name="pad-back" type="as">
+            <default>['button:305']</default>
+            <summary>Controller inputs for back</summary>
+        </key>
+        <key name="pad-home" type="as">
+            <default>['button:316']</default>
+            <summary>Controller inputs for home</summary>
+        </key>
+        <key name="pad-page-previous" type="as">
+            <default>['button:310']</default>
+            <summary>Controller inputs for previous page</summary>
+        </key>
+        <key name="pad-page-next" type="as">
+            <default>['button:311']</default>
+            <summary>Controller inputs for next page</summary>
+        </key>
+        <key name="gamepad-enabled" type="b">
+            <default>true</default>
+            <summary>Read game controllers</summary>
+            <description>Navigate the library with a game controller, through libmanette. Only acted on while the library is on screen, except Home, which opens it when no window has the keyboard.</description>
+        </key>
+
+        <!-- Appearance: one set of style settings, shared by both places -->
+        <key name="columns" type="i">
+            <range min="4" max="10"/>
+            <default>6</default>
+            <summary>Columns</summary>
+            <description>Covers per row. Fewer means larger covers. The count is capped by what fits the space the grid is drawn in — the overview's grid slot is the smaller — so a narrow space shows fewer.</description>
+        </key>
+        <key name="rows" type="i">
+            <range min="1" max="3"/>
+            <default>2</default>
+            <summary>Rows</summary>
+            <description>Rows per page. Fewer means larger covers. The count is capped by what fits the space the grid is drawn in — the overview's grid slot is the smaller — so a narrow space shows fewer.</description>
+        </key>
+        <key name="grid-align" type="s">
+            <choices>
+                <choice value="center"/>
+                <choice value="start"/>
+            </choices>
+            <default>"center"</default>
+            <summary>Grid alignment</summary>
+            <description>Where the covers sit when a row is not full: "center" centres a part-full row under the full ones, as the app grid does; "start" lines it up against the leading edge. Full rows are centred on the page either way.</description>
+        </key>
+        <key name="corner-radius" type="i">
+            <range min="0" max="40"/>
+            <default>18</default>
+            <summary>Corner radius</summary>
+            <description>How rounded artwork, tiles and the pop-up are, in pixels. 0 is square. The related radii (hero, rows, pane, panel) scale with it.</description>
+        </key>
+        <key name="detail-size" type="i">
+            <range min="80" max="120"/>
+            <default>100</default>
+            <summary>Pop-up size</summary>
+            <description>How much of the room available a picked game's pop-up fills, as a percentage.</description>
+        </key>
+
+        <key name="play-on-new-workspace" type="b">
+            <default>true</default>
+            <summary>Play on a new workspace</summary>
+            <description>When on, launching a game first moves to an empty workspace, so the game's window opens there and the one it was picked on is left as it was. The library closes on a launch either way. Folders ("Show in Files") open where you are.</description>
+        </key>
+    </schema>
+</schemalist>

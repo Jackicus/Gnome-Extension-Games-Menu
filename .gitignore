@@ -1,0 +1,15 @@
+# Build artifacts
+src/schemas/gschemas.compiled
+dist/
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
