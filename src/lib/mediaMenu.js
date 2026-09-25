@@ -21,9 +21,9 @@
 // has, and what the grid shows when it is next opened is the apps, because a
 // view only lives as long as the grid is up.
 //
-// Media Libraries does all of this too, in the same slot of the same
-// overview. Only one view can be in it at a time — both hide the grid's own
-// box to show theirs — so the button pressed with the other extension's view
+// Another extension may do all of this too, in the same slot of the same
+// overview. Only one view can be in it at a time — each hides the grid's own
+// box to show its own — so the button pressed with the other extension's view
 // up closes the overview and opens it again onto the games (`open`): two of
 // the shell's own transitions, rather than one grid drawn over the other.
 //
@@ -185,7 +185,7 @@ export class MediaMenu {
     // divides by its height.
     //
     // The box comes from the layout's `_getAppDisplayBoxForState`, which this
-    // wraps on the layout itself — and so does Media Libraries, for its own
+    // wraps on the layout itself — and another extension may too, for its own
     // view, on the same layout. Wrappers stack: each calls whatever it found,
     // and each grows the box only while its own view is up, which is never
     // while the other's is (see `open`). What they must not do is take the
@@ -358,10 +358,10 @@ export class MediaMenu {
     // The overview, on the view: opened onto it, or brought up to the grid if
     // it is already showing.
     //
-    // Unless another extension's media view is what the grid is showing —
-    // Media Libraries', most likely. Ours shown now would be drawn over it,
-    // two grids in one slot with the apps hidden under both. So the overview
-    // goes down with the other view in it, and comes back up onto ours
+    // Unless another extension's view is what the grid is showing. Ours shown
+    // now would be drawn over it, two grids in one slot with the apps hidden
+    // under both. So the overview goes down with the other view in it, and
+    // comes back up onto ours
     // (`hidden`, in `enable`), as a dock's Show Apps would reopen it.
     open(key) {
         this._next = null;

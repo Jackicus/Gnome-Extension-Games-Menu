@@ -41,11 +41,11 @@
 # GAMES_MENU_NESTED_IDLE seconds (default 600, 0 = never) without a command here,
 # and when that session ends (the SessionEnd hook runs 'session-end').
 #
-# Media Libraries has a nested shell of its own, driven by a copy of this
-# script, and the two can run at once. Everything that names this one is its
-# own — the run dir, the Wayland display, the bus dbus-run-session makes — and
-# every process this script looks for is matched by this repo's own paths, so
-# a stop here never takes the other one down.
+# Other extensions' repos may have nested shells of their own, driven by
+# copies of this script, and they can all run at once. Everything that names
+# this one is its own — the run dir, the Wayland display, the bus
+# dbus-run-session makes — and every process this script looks for is matched
+# by this repo's own paths, so a stop here never takes another one down.
 #
 set -euo pipefail
 
@@ -67,9 +67,9 @@ GUARD_OWNED_FILE="$RUN_DIR/owns-crash-guard"
 # GNOME Shell creates this for its first 60 s; if the shell crashes while it
 # exists, the systemd unit disables every extension. The nested shell shares the
 # runtime dir, so it creates the REAL session's copy -- and a stop inside those
-# 60 s leaves it behind, arming that for the user's next real crash. Media
-# Libraries' nested shell shares it too: whichever of the two found it absent
-# owns it, and only the owner's stop removes it.
+# 60 s leaves it behind, arming that for the user's next real crash. Another
+# repo's nested shell shares it too: whichever found it absent owns it, and
+# only the owner's stop removes it.
 CRASH_GUARD="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/gnome-shell-disable-extensions"
 IDLE_SECS="${GAMES_MENU_NESTED_IDLE:-600}"
 # The real session's display and bus, captured before nested_env overrides them:
@@ -261,8 +261,8 @@ start_watchdog() {
 }
 
 # Anything of ours that outlived its pid file: mirror streams and watchdogs.
-# Matched by this repo's own driver and script paths, which Media Libraries'
-# copies of them never contain, so its mirror and watchdog are left alone.
+# Matched by this repo's own driver and script paths, which another repo's
+# copies of them never contain, so their mirrors and watchdogs are left alone.
 kill_strays() {
     local pid
     for pid in $(pgrep -f -- "$DRIVER stream" 2>/dev/null) \

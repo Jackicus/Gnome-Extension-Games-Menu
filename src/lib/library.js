@@ -11,10 +11,9 @@
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
-// The one section. It is still a list, and a section is still a key, because
-// that is the shape the grid, the button beside Show Apps and the preferences
-// share with Media Libraries, which this extension was split from: a fix to
-// either ports to the other without being rewritten first.
+// The one section. It is a list, and a section is a key, because that is the
+// shape the grid, the button beside Show Apps and the preferences are built
+// around: `games-` settings, a title and an icon, looked up by key.
 export const SECTIONS = [
     {
         key: 'games',

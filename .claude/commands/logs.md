@@ -14,6 +14,5 @@ it's empty. Anything systemd accepts works (`5 min ago`, `today`, `09:00`).
 Summarise what happened rather than dumping every line: how many enable/disable
 cycles, whether the library was rebuilt, and any errors or stack traces in full.
 Exceptions inside a GNOME extension only ever surface here, never in a terminal,
-so this is the place to look when something silently does nothing. Media
-Libraries logs to the same journal as `[Media Libraries]`; those lines are not
-this extension's.
+so this is the place to look when something silently does nothing. Other
+extensions log to the same journal; only `[Games Menu]` lines are this one's.

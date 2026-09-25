@@ -76,15 +76,15 @@ the old dconf snapshot and whatever the previous build left on screen; only a
 fresh start exercises `extension.js`, the enable path and first-frame layout the
 way a login does. Edits to `extension.js` or `metadata.json` *need* one.
 
-## Media Libraries' nested shell
+## Other nested shells
 
-Media Libraries has its own copy of this tooling and its own nested shell, and
-the two can run at the same time: this one is Wayland display `games-menu-dev`,
-run dir `$XDG_RUNTIME_DIR/games-menu-nested`, and every stray it looks for is
-matched by this repo's paths. **Never** stop, kill or `pkill` anything of
-`media-libraries-dev` / `media-libraries-nested` from here — another session may
-be using it. Both share dconf (below), so two of them at once is also two
-`dconf-service`s over one database.
+Other extensions' repos have their own copies of this tooling and their own
+nested shells, and they can run at the same time as this one: this one is
+Wayland display `games-menu-dev`, run dir `$XDG_RUNTIME_DIR/games-menu-nested`,
+and every stray it looks for is matched by this repo's paths. **Never** stop,
+kill or `pkill` any nested shell, mirror or run dir but this one's from here —
+another session may be using it. They all share dconf (below), so two at once
+is also two `dconf-service`s over one database.
 
 ## Reading the screen (1600×900)
 
@@ -93,8 +93,8 @@ loaded, the accent or geometry changed. Roughly:
 
 - **The library button** sits beside Show Apps. The nested shell loads the real
   session's extensions, so with Dash to Panel on it is in its bottom panel:
-  Show Apps ≈ (30, 875), and Games at ≈ (90, 875) — unless Media Libraries'
-  buttons are there too, in which case whichever of the two attached last sits
+  Show Apps ≈ (30, 875), and Games at ≈ (90, 875) — unless another
+  extension's buttons are there too, in which case whichever attached last sits
   next to Show Apps; screenshot the strip first (`shot F 0 850 400 50`).
   Without Dash to Panel it is in the overview's dash, just right of Show Apps
   ≈ (727, 850).
@@ -123,8 +123,8 @@ contain an apostrophe — steps are shell-split.
 
 `logs` first. A JS exception during enable leaves the previous UI on screen, which
 reads as "no change". `logs` hides D-Bus activation and portal chatter; `logs 200
---all` shows everything. `[Games Menu]` lines are the extension's own;
-`[Media Libraries]` lines are the other extension's, loaded alongside.
+--all` shows everything. `[Games Menu]` lines are the extension's own; the
+rest are from other extensions, loaded alongside.
 
 ## Gotchas
 
@@ -170,10 +170,10 @@ reads as "no change". `logs` hides D-Bus activation and portal chatter; `logs 20
   unclaimed on the throwaway bus) because the shell refuses unknown callers. Never
   try that against the real session.
 - **Other extensions load too** (the nested shell reads the same extension list), so
-  their log lines and top-bar icons appear alongside Games Menu — Media Libraries
-  among them, which is also the way to see the two side by side: both buttons
-  beside Show Apps, and a press of one with the other's grid up in the overview
-  closing and reopening the overview onto the one pressed.
+  their log lines and top-bar icons appear alongside Games Menu — which is
+  also the way to see it beside another library with a button of its own: both
+  buttons beside Show Apps, and a press of one with the other's grid up in the
+  overview closing and reopening the overview onto the one pressed.
 - **The mirror needs GStreamer's PipeWire plugin.** If `mirror on` fails, use
   `start --headless` and screenshots, and tell the user.
 - **Driving the prefs window:** `./scripts/nested.sh run gnome-extensions prefs games-menu@jackt &`
@@ -182,16 +182,16 @@ reads as "no change". `logs` hides D-Bus activation and portal chatter; `logs 20
   imported, so after editing it kill *the nested one* before reopening — the
   process whose environment has `WAYLAND_DISPLAY=games-menu-dev`, never a
   bare `pkill -f`, which also matches the real session's, your own shell and
-  Media Libraries' nested one.
+  any other repo's nested one.
 - **Never press Rescan in the nested prefs window.** It runs the scanner with
   `--from-settings` against the real GSettings, keys included, and goes online.
 - **A game controller is `scripts/vpad.py`**, a virtual Xbox 360 pad on
   uinput driven through a FIFO (`tap A`, `tap GUIDE`, `hat down`, `stick right
-  1.0`). It is a real device for the whole machine while it runs — the real
-  session's Media Libraries sees it too — so `quit` it when done. Controller
-  input is acted on only while the library is up, except Home (Guide, here),
-  which opens it when no window has the focus; drive it with the prefs window
-  closed.
+  1.0`). It is a real device for the whole machine while it runs — every
+  extension in the real session that reads pads sees it too — so `quit` it when
+  done. Controller input is acted on only while the library is up, except Home
+  (Guide, here), which opens it when no window has the focus; drive it with the
+  prefs window closed.
 - **The shell's "Allow inhibiting shortcuts" prompt writes the real permission
   store**, which the nested session shares. If a test has to answer it, delete
   the entry afterwards (`PermissionStore.DeletePermission gnome

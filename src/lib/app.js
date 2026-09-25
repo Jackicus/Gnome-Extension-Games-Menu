@@ -230,7 +230,7 @@ export class GamesMenuApp {
     // up — the way back out, exactly as its button is pressed.
     _onShortcut(key) {
         // A popup holds the keyboard for itself — a menu in the top bar, the
-        // detail pop-up, Media Libraries' own panel — unless it is the modal
+        // detail pop-up, another extension's panel — unless it is the modal
         // library's panel, which the shortcut closes as its button does.
         if (Main.actionMode === Shell.ActionMode.POPUP &&
             !(this._browser instanceof LibraryWindow && this._browser.state.key))
@@ -262,7 +262,7 @@ export class GamesMenuApp {
     // Home on a controller with nothing of ours up: the library, opened, when
     // nothing else has the keyboard — never over a window, where it would be
     // a game's own button too, and never over someone else's popup or
-    // overview, Media Libraries' included.
+    // overview.
     _controlsOpen() {
         if (global.display.focus_window || Main.modalCount > 0)
             return;
@@ -302,9 +302,8 @@ export class GamesMenuApp {
     // that nothing is using.
     //
     // A workspace held open by `_keepAliveId` is not free however empty it
-    // looks: the shell sets it on one being dragged to, and Media Libraries
-    // on one it has claimed for a library of its own, drawn on the wallpaper.
-    // Only read, never set, here.
+    // looks: the shell sets it on one being dragged to, and an extension may
+    // on one it has claimed for itself. Only read, never set, here.
     _emptyWorkspace() {
         const wm = global.workspace_manager;
         const free = ws => ws && !ws._keepAliveId &&

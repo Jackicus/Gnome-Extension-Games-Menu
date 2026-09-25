@@ -10,12 +10,11 @@
 // puts a grid in the overview's app-grid slot, the "modal" library pops a
 // panel out of the button itself. The view says what a press means
 // (`onActivate`) and whether the button is lit (`sync`); everything else about
-// it is here. It is still a button per section, of which there is one, so
-// that this file stays the one Media Libraries has.
+// it is here. It is a button per section, of which there is one.
 //
-// Media Libraries puts buttons of its own in the same place, in the same
-// shell, and hooks Dash to Panel the same way — see `_attachToPanel` for how
-// the two hooks stack without either pulling the other's out.
+// Other extensions may put buttons of their own in the same place, and hook
+// Dash to Panel the same way — see `_attachToPanel` for how the hooks stack
+// without either pulling the other's out.
 
 import St from 'gi://St';
 import Clutter from 'gi://Clutter';
@@ -166,8 +165,8 @@ export class SectionButtons {
     // Show Apps is in, straight after it, each time the groups are made —
     // which is a wrapper round the panel's own `_updateGroupedElements`.
     //
-    // Another extension can wrap the same method on the same panel, and Media
-    // Libraries does, for its own buttons. Each wrapper calls whatever was
+    // Another extension can wrap the same method on the same panel, for its
+    // own buttons. Each wrapper calls whatever was
     // there before it, so any number of them stack; what must not happen is
     // one of them taking the method back by deleting it, which takes every
     // wrapper put on after it too. So ours is only ever taken back while it is

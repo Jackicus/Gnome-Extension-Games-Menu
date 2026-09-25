@@ -75,14 +75,14 @@
              while the library has the keyboard; the arrows, Enter and Escape
              always work besides. The defaults are a media remote's: OK and
              Select (0x10081160, 0x1008ffa0), Back and Exit (0x1008ff26,
-             0x100810ae), Page Up/Down and Channel Down/Up. Home has no key:
-             the remote's Home page key is Media Libraries', which runs in the
-             same shell. pad-<action> are controller inputs as libmanette
+             0x100810ae), Page Up/Down and Channel Down/Up. Home has no key,
+             so the remote's Home page key is left to anything else that
+             wants it. pad-<action> are controller inputs as libmanette
              reports them, "button:<code>" or "axis:<code>" and a direction;
              the defaults are a mapped pad's D-pad, left stick, A, B, the
-             bumpers and Guide (316) for Home — Media Libraries' Home is Menu
-             (315), and Home is the one input acted on with neither library
-             up, so the two must differ. -->
+             bumpers and Guide (316) for Home, not Menu (315): Home is the
+             one input acted on with the library not up, so it keeps off the
+             button another extension is likeliest to want for the same. -->
         <key name="keys-up" type="a(uu)">
             <default>@a(uu) []</default>
             <summary>Keys for up</summary>

@@ -15,9 +15,6 @@ options, Proton version and overlay all still apply), and a PS2 disc is handed
 to PCSX2. Think of it as a good-looking front door to launchers you already
 use.
 
-It is the games half of [Media Libraries](https://github.com/Jackicus/Gnome-Extension-Media-Libraries),
-split out into its own extension, and the two are made to run side by side.
-
 ---
 
 ## What it does
@@ -139,13 +136,14 @@ PCSX2 cover simply get a drawn placeholder.
 
 ---
 
-## Alongside Media Libraries
+## Alongside other extensions
 
-Games Menu and Media Libraries can both be enabled. Each has its own button
-beside Show Apps, its own settings and its own cache. Pressing one's button
-while the other's grid is up in the overview swaps them over. Their
-controllers' Home buttons differ by default — Guide opens Games Menu, Menu
-opens Media Libraries — so one press never opens both.
+Games Menu keeps to its own button, settings and cache, so it sits happily
+beside docks, Dash to Panel, Blur my Shell, and other extensions that put a
+button beside Show Apps. If another extension's grid is up in the overview when
+you press **Games**, the overview closes and reopens on your games rather than
+drawing one grid over the other. On a controller, Guide opens Games Menu and
+Menu is left free for anything else.
 
 ---
 
@@ -169,7 +167,7 @@ the system journal, never to a terminal.
 
 `CLAUDE.md` is the real design document: how the pieces fit together, which
 shell internals are being used and why, what keeps it from tripping over
-Media Libraries, and the traps that bite.
+other extensions, and the traps that bite.
 
 ```bash
 # Symlink src/ into the extensions dir, so edits are live

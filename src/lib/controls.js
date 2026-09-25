@@ -17,10 +17,10 @@
 // nothing else has the keyboard. The shell itself has no gamepad support at
 // all, so without this a controller does nothing on the desktop.
 //
-// Media Libraries reads the same pads the same way, in the same shell. Each
-// acts only while its own library is up, so the two never answer the same
-// press — except Home with nothing up, which is why this extension's Home
-// defaults to the Guide button and Media Libraries' to Menu.
+// Another extension may read the same pads in the same shell. This one acts
+// only while its own library is up, so the two never answer the same press —
+// except Home with nothing up, which is why Home defaults to the Guide button
+// and leaves Menu to anything else that wants it.
 
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';

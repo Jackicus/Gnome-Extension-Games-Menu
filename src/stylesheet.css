@@ -14,9 +14,8 @@
  * below follows Settings -> Accessibility -> Large Text, and the values land
  * on the shell's own steps (%title_1 and friends in _common.scss).
  *
- * Every class is `gm-`: Media Libraries runs in the same shell with a
- * stylesheet of its own, and St's are global, so a class either of them
- * shared would be styled by both.
+ * Every class is `gm-`: St's stylesheets are global to the shell, so a class
+ * another extension also used would be styled by both.
  *
  * Corner radii here are fallbacks only. They follow the "corner-radius"
  * setting, which St CSS cannot express, so lib/shape.js sets the real value

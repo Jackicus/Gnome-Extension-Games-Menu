@@ -32,9 +32,9 @@ or the PCSX2 binary with `-fullscreen -- <disc>` — which `lib/app.js`
 `openPath` runs as it is. A PS2 disc with no PCSX2 binary found has no
 `launch`, and the detail pane shows no Play button for it.
 
-Every scan re-reads everything: there is no per-item `scan_sig` reuse (a
-Steam manifest is one small file, and there is nothing to walk), so the
-merge-with-previous machinery of Media Libraries' scanner is not here.
+Every scan re-reads everything: there is no per-item `scan_sig` reuse and no
+merging with the previous library — a Steam manifest is one small file, and
+there is nothing to walk.
 
 `metadata.py` holds `path_key` and `cache_local_art`, and `games_scanner.py`
 imports them; the scanner never imports the other way round.

@@ -7,12 +7,11 @@ a panel that pops out of its button. No window, no titlebar, nothing on the
 wallpaper. Shell versions 48 to 50 (48 and 49 by audit against the shell's
 sources, not by boot — see the compat note in Gotchas).
 
-It was split out of **Media Libraries** (`../Gnome-Extension-Media-Libraries`),
-whose games section it was, and it is still a close copy of that extension's
-`menu` and `modal` places: the same modules, the same shapes, the same key-based
-section plumbing with one section in it, so a fix to either ports to the other.
-**The user runs both in the same shell at once** — see "Running next to Media
-Libraries" below before touching anything global.
+**It shares the shell with other extensions that reach the same places** —
+docks, Dash to Panel, Blur my Shell, and other libraries with a button beside
+Show Apps and a grid in the app-grid slot, several of which the user runs at
+once. See "Running next to other extensions" below before touching anything
+global.
 
 ## Seeing it
 
@@ -27,8 +26,9 @@ banner in it so the watcher knows what is about to happen.
 
 Read the **`drive-extension` skill** before driving it; it covers the lifecycle and
 the traps. Keep one nested shell up across edits and `reload` into it; `make
-nested-stop` tears it down — always do that when finished. Media Libraries has
-a nested shell of its own; never stop or kill that one from here.
+nested-stop` tears it down — always do that when finished. Other extensions'
+repos have nested shells of their own; never stop or kill any of those from
+here.
 
 All `make` targets delegate to `scripts/`: `dev.sh` for the extension itself and
 `nested.sh` for the nested-shell targets (`nested`, `nested-stop`, `preview`, …).
@@ -182,8 +182,7 @@ Where each of the two things opens is a setting, and the two are read
 `detail-opens-in` for the pane of a picked game. Both take the same two
 values, meaning the same two places — `menu` and `modal` — and nothing follows
 from the pair. There is no desktop or workspaces place: a game is one thing to
-launch, not a collection to leave standing on the wallpaper, and that was
-Media Libraries' surface and is not here.
+launch, not a collection to leave standing on the wallpaper.
 
 Both places are opened from **one button beside Show Apps** (in the dash, or in
 Dash to Panel's panel). `sectionButtons.js` builds it — a `Dash.ShowAppsIcon`
@@ -206,7 +205,7 @@ grabs its own — mutter follows the setting, so one set in the preferences
 works at once, and it is not listed in GNOME Settings. A press is the button
 (`app.js` `_onShortcut`): `toggle` on the browser. It is grabbed in `POPUP`
 mode too, but only so the modal library's own panel can be closed with it;
-over any other popup — Media Libraries' included — it does nothing. The
+over any other popup — another extension's included — it does nothing. The
 preferences set it the way GNOME Settings does (`prefs.js` `_captureShortcut`):
 system shortcuts are inhibited while the dialog listens — the shell asks once
 whether the Extensions app may — and a key the window manager, the shell, the
@@ -306,30 +305,29 @@ whole of what it avoids). And **nothing stats per item**: `library.js` lists
 the two artwork cache folders once per load and looks paths up in that, rather
 than a blocking `file_test` per poster.
 
-## Running next to Media Libraries
+## Running next to other extensions
 
-The user runs Media Libraries in the same shell. Both put buttons beside Show
-Apps, both put a grid in the same app-grid slot, both hook the same shell and
-Dash to Panel methods, and both read the same controllers. Everything below is
-what keeps the two from breaking each other; keep it true.
+The user runs other extensions in the same shell that do what this one does:
+put buttons beside Show Apps, put a grid in the same app-grid slot, hook the
+same shell and Dash to Panel methods, and read the same controllers.
+Everything below is what keeps them from breaking each other; keep it true.
 
 - **GObject type names are global to the process.** Every
   `GObject.registerClass` class here is `GamesMenu…` (`GamesMenuMediaView`,
-  `GamesMenuPanel`, `GamesMenuSectionIcon`, …); Media Libraries' are
-  `MediaLibraries…`. A duplicate name makes `enable()` throw. A new class gets
-  the prefix.
-- **Stylesheets are global.** Every class of ours is `gm-`; theirs are `ml-`.
-  Shell classes (`app-folder-dialog`, `overview-tile`, `button`) are shared on
-  purpose. The blur effect on a panel is named `games-menu-panel-blur`.
+  `GamesMenuPanel`, `GamesMenuSectionIcon`, …). A duplicate name makes
+  `enable()` throw. A new class gets the prefix.
+- **Stylesheets are global.** Every class of ours is `gm-`. Shell classes
+  (`app-folder-dialog`, `overview-tile`, `button`) are shared on purpose. The
+  blur effect on a panel is named `games-menu-panel-blur`.
 - **Shell and Dash to Panel monkey-patches must chain.** `mediaMenu.js` wraps
   the overview layout's `_getAppDisplayBoxForState` and `sectionButtons.js`
   wraps Dash to Panel's `panel._updateGroupedElements`, both as own properties
-  of the instance, and Media Libraries wraps the same two. Each wrapper calls
-  whatever it found, so they stack in either order. Taking one back is where
-  it goes wrong: `delete` removes every wrapper put on after it too. So ours
-  come off (`_unfoldWorkspaces`, the Dash to Panel host's `release`) only while
-  the current value is still ours, and then by putting back exactly what was
-  there before — the other extension's wrapper, or nothing (a `delete`, to
+  of the instance, and another extension may wrap the same two. Each wrapper
+  calls whatever it found, so they stack in either order. Taking one back is
+  where it goes wrong: `delete` removes every wrapper put on after it too. So
+  ours come off (`_unfoldWorkspaces`, the Dash to Panel host's `release`) only
+  while the current value is still ours, and then by putting back exactly what
+  was there before — the other extension's wrapper, or nothing (a `delete`, to
   show the class's method again). With someone else's wrapper over ours, ours
   stays as a link in their chain and goes inert: `folded` checks
   `menu._foldedBox === folded`, the panel wrapper checks its `element`.
@@ -338,24 +336,25 @@ what keeps the two from breaking each other; keep it true.
   very method) is not stepped round, and it measures the slot for its own
   views off the class rather than off what the wrapper beneath returned, which
   the other extension may have grown for its view.
-- **Two media views, one app grid.** Both show their grid by adding a view to
+- **Two views, one app grid.** A library shows its grid by adding a view to
   `appDisplay` and hiding `appDisplay._box`. If the grid is up, `_box` is
   hidden and the view is not ours (`MediaMenu._otherViewUp`), our button (or
   shortcut, or controller Home) does not draw over it: `open` hides the
   overview and reopens onto ours from the `hidden` handler (`_next`,
   `_reopenId`) — two of the shell's own transitions. Only one view is ever up,
   which is also what lets each fold wrapper grow the slot only for its own.
-- **Controllers.** Both read the same pads, and each acts only while its own
-  library is up — except Home, which opens the library when nothing has focus.
-  So the Home defaults differ: here `pad-home` is the Guide button
-  (`button:316`) and `keys-home` is empty; Media Libraries keeps Menu
-  (`button:315`) and the remote's HomePage key. `_controlsOpen` also refuses
-  while any modal grab is up (`Main.modalCount > 0`), so Guide never opens the
-  games over Media Libraries' panel or overview.
+- **Controllers.** Another extension may read the same pads, and each should
+  act only while its own library is up — except Home, which opens the library
+  when nothing has focus.
+  So Home here is the Guide button (`button:316`) and `keys-home` is empty,
+  leaving Menu (`button:315`) and the remote's HomePage key to anything else.
+  `_controlsOpen` also refuses while any modal grab is up
+  (`Main.modalCount > 0`), so Guide never opens the games over another
+  extension's panel or overview.
 - **Workspaces.** `_emptyWorkspace` (for `play-on-new-workspace`) skips any
-  workspace with `_keepAliveId` set — the shell's own during a drag, and Media
-  Libraries' on a workspace it has claimed for a library of its own. It only
-  ever reads `_keepAliveId`, never sets it.
+  workspace with `_keepAliveId` set — the shell's own during a drag, or an
+  extension's on a workspace it has claimed for itself. It only ever reads
+  `_keepAliveId`, never sets it.
 - **Distinct paths.** Settings `org.gnome.shell.extensions.games-menu`, cache
   `~/.cache/games-menu/`, staging `$XDG_RUNTIME_DIR/games-menu/`, log prefix
   `[Games Menu]` (`make logs` greps for it), nested shell `games-menu-dev` in
@@ -472,7 +471,7 @@ what keeps the two from breaking each other; keep it true.
   `Main.overview._overview.controls`, its `_stateAdjustment`,
   `_workspacesDisplay` and `_searchController`, the layout's
   `_getAppDisplayBoxForState` (wrapped, and unwrapped on disable — see
-  "Running next to Media Libraries"), `appDisplay._box`, and `BaseAppView`,
+  "Running next to other extensions"), `appDisplay._box`, and `BaseAppView`,
   which the shell does not export and is reached as `AppDisplay`'s prototype.
   `sectionButtons.js` adds `global.dashToPanel.panels` and its
   `panels-created` signal (Dash to Panel's own, used to re-attach the button
