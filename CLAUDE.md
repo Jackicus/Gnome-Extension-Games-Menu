@@ -529,8 +529,9 @@ Everything below is what keeps them from breaking each other; keep it true.
   nothing in `lib/` or `prefs.js` touches a game's folder synchronously
   (above).
 - **API keys are secrets.** They sit in dconf in plain text, in the
-  `credentials` setting (the prefs say so). Never log them, never put them on a
-  command line, and never paste them into the conversation; reading them back
+  `credentials` setting (the README and the schema say so; the preferences
+  do not yet). Never log them, never put them on a command line, and never
+  paste them into the conversation; reading them back
   out of GSettings is fine, which is how the scanner gets them. Never run the
   scanner with `--from-settings` to test (it reads the real keys and goes
   online); see `src/backend/CLAUDE.md`. `~/Documents/keys/<SERVICE>/` is the
