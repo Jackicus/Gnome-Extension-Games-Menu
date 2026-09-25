@@ -45,9 +45,11 @@ class GamesMenuLibraryPanel extends MediaPanel {
         this._room = null;
 
         // A header of titles alone: the way out of this panel is Escape, the
-        // shade, or the button it came out of.
+        // shade, or the button it came out of. The panel itself has no
+        // padding in the theme; a folder's name is inset by its container,
+        // so this takes that container's class and the same inset with it.
         this._header = new St.BoxLayout({
-            style_class: 'gm-header',
+            style_class: 'gm-header folder-name-container',
             x_expand: true,
             y_align: Clutter.ActorAlign.CENTER,
         });
