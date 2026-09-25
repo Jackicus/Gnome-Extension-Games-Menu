@@ -290,7 +290,10 @@ class GamesMenuMediaView extends BaseAppView {
         // so it registers itself. A group further out — the whole panel,
         // say — leaves the arrows with nothing to move between.
         global.focus_manager.add_group(this);
-        this.connect('destroy', () => global.focus_manager.remove_group(this));
+        this.connect('destroy', () => {
+            this._destroyed = true;
+            global.focus_manager.remove_group(this);
+        });
 
         // A remote's keys, or the user's own, reach the grid before anything
         // around it: in the overview there is nothing of ours around it.
@@ -346,8 +349,14 @@ class GamesMenuMediaView extends BaseAppView {
         }
     }
 
-    // Every way of turning the page comes through here.
+    // Every way of turning the page comes through here — and one that is not
+    // a turn at all. Destroying the view empties the grid, the grid says its
+    // pages changed, and the shell's view turns to the page that is left
+    // (appDisplay.js BaseAppView, `pages-changed`); the grid would then ease
+    // an adjustment the scroll view has already taken back, and throw.
     goToPage(page, animate = true) {
+        if (this._destroyed)
+            return;
         if (this._data)
             this._fillTo(page);
         super.goToPage(page, animate);
