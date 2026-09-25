@@ -28,7 +28,8 @@ Read the **`drive-extension` skill** before driving it; it covers the lifecycle 
 the traps. Keep one nested shell up across edits and `reload` into it; `make
 nested-stop` tears it down — always do that when finished. Other extensions'
 repos have nested shells of their own; never stop or kill any of those from
-here.
+here. `./scripts/nested.sh start --clean --demo` is how `docs/screenshots/`
+is taken: settings of its own, no other extensions, and a made-up library.
 
 All `make` targets delegate to `scripts/`: `dev.sh` for the extension itself and
 `nested.sh` for the nested-shell targets (`nested`, `nested-stop`, `preview`, …).
